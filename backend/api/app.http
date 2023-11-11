@@ -1,0 +1,34 @@
+
+POST   http://localhost:8080/api/initialize-database
+
+###
+
+GET     http://localhost:8080/api/get-transactions-count
+
+###
+
+GET http://localhost:8080/api/transactions?search=&page=1&perPage=10
+
+
+###
+
+GET http://localhost:8080/api/statistics/1
+
+
+
+###
+
+GET http://localhost:8080/api/bar-chart/1
+
+
+
+###
+
+GET http://localhost:8080/api/pie-chart/1
+
+
+
+###
+
+
+
