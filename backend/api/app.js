@@ -99,7 +99,7 @@ async function initializeAndSeedDatabase() {
 }
 
 //TODO initialize - database;
-app.post("/api/initialize-database/", async (req, res) => {
+app.get("/api/initialize-database/", async (req, res) => {
   try {
     await initializeAndSeedDatabase();
     res.status(200).json({ message: "Database initialized successfully" });
@@ -243,10 +243,11 @@ app.get(
   "/api/product-transactions-statistics-barChart-pieChart/:month/",
   async (req, res) => {
     const { month } = req.params;
+    let { search = "", page = 1, perPage = 10 } = req.query;
 
     try {
       const transactionsResponse = await axios.get(
-        `http://localhost:8080/api/transactions?search=&page=1&perPage=10`
+        `http://localhost:8080/api/transactions?search=${search}&page=${page}&perPage=${perPage}`
       );
 
       const statisticsResponse = await axios.get(
@@ -259,6 +260,8 @@ app.get(
       const pieChartDataResponse = await axios.get(
         `http://localhost:8080/api/pie-chart/${month}`
       );
+
+      console.log(transactionsResponse);
 
       const combinedData = {
         transactions: transactionsResponse.data,
