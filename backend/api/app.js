@@ -7,10 +7,10 @@ const cors = require("cors");
 
 const app = express();
 const dbPath = path.join(__dirname, "productTransactions.db");
-app.use(cors());
 
 let db = null;
 const port = process.env.PORT || 8080;
+app.use(cors());
 
 const initializeDBAndServer = async () => {
   try {
@@ -49,7 +49,7 @@ async function fetchSeedData() {
 //     category TEXT,
 //     image TEXT,
 //     sold BOOLEAN,
-//     date_of_sale TEXT
+//     dateOfSale TEXT
 //   )
 
 app.get("/api/get-transactions-count", async (req, res) => {
@@ -71,7 +71,7 @@ async function initializeAndSeedDatabase() {
 
       for (const transaction of seedData) {
         await db.run(
-          `INSERT INTO product_transactions (id,title,price,description,category,image,sold,date_of_sale) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+          `INSERT INTO product_transactions (id,title,price,description,category,image,sold,dateOfSale) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
           [
             transaction.id,
             transaction.title,
@@ -101,7 +101,7 @@ app.get("/api/initialize-database", async (req, res) => {
     res.status(200).json({ message: "Database initialized successfully" });
   } catch (error) {
     console.error(`Error while initializing : ${error}`);
-    res.status(500).send("Internal Server Error at initialize-database");
+    res.status(500).json("Internal Server Error at initialize-database");
   }
 });
 // transactions
@@ -127,15 +127,15 @@ app.get("/api/statistics/:month", async (req, res) => {
   const { month } = req.params;
   try {
     const totalSaleAmount = await db.get(
-      `SELECT SUM(price) as totalSaleAmount FROM product_transactions WHERE  CAST(strftime('%m', date_of_sale) AS int)=${month}  AND sold = 1 ORDER BY id `
+      `SELECT SUM(price) as totalSaleAmount FROM product_transactions WHERE  CAST(strftime('%m', dateOfSale) AS int)=${month}  AND sold = 1 ORDER BY id `
     );
 
     const totalSoldItems = await db.get(
-      `SELECT COUNT(*) as totalSoldItems FROM product_transactions WHERE  CAST(strftime('%m', date_of_sale) AS int)=${month}  AND sold = 1 ORDER BY id `
+      `SELECT COUNT(*) as totalSoldItems FROM product_transactions WHERE  CAST(strftime('%m', dateOfSale) AS int)=${month}  AND sold = 1 ORDER BY id `
     );
 
     const totalNotSoldItems = await db.get(
-      `SELECT COUNT(*) as totalNotSoldItems FROM product_transactions WHERE  CAST(strftime('%m', date_of_sale) AS int)=${month}  AND sold = 0 ORDER BY id`
+      `SELECT COUNT(*) as totalNotSoldItems FROM product_transactions WHERE  CAST(strftime('%m', dateOfSale) AS int)=${month}  AND sold = 0 ORDER BY id`
     );
 
     res.json({
@@ -182,7 +182,7 @@ app.get("/api/bar-chart/:month", async (req, res) => {
         END AS range,
         COUNT(*) AS items
       FROM product_transactions
-      WHERE CAST(strftime('%m', date_of_sale) AS int) = ${month}
+      WHERE CAST(strftime('%m', dateOfSale) AS int) = ${month}
       GROUP BY range
     `);
 
@@ -218,7 +218,7 @@ app.get("/api/pie-chart/:month", async (req, res) => {
           `
           SELECT COUNT(*) AS items
           FROM product_transactions
-          WHERE CAST(strftime('%m', date_of_sale) AS int) = ? AND category = ?
+          WHERE CAST(strftime('%m', dateOfSale) AS int) = ? AND category = ?
         `,
           [selectedMonth, category]
         );
@@ -258,8 +258,8 @@ app.get(
       const combinedData = {
         transactions: transactionsResponse.data,
         statistics: statisticsResponse.data,
-        bar_chart: barChartDataResponse.data,
-        pie_chart: pieChartDataResponse.data,
+        barChart: barChartDataResponse.data,
+        pieChart: pieChartDataResponse.data,
       };
 
       res.json(combinedData);
@@ -272,6 +272,6 @@ app.get(
   }
 );
 
-// CAST(strftime('%Y', date_of_sale) AS int) = ${year} and
-// CAST(strftime('%Y', date_of_sale) AS int) = ${year} and
-// CAST(strftime('%Y', date_of_sale) AS int) = ${year} and
+// CAST(strftime('%Y', dateOfSale) AS int) = ${year} and
+// CAST(strftime('%Y', dateOfSale) AS int) = ${year} and
+// CAST(strftime('%Y', dateOfSale) AS int) = ${year} and

@@ -1,6 +1,5 @@
 #  initialize-database
 GET  http://localhost:8080/api/initialize-database
-
 ###
 # get-transactions-count
 GET     http://localhost:8080/api/get-transactions-count
@@ -23,5 +22,5 @@ GET http://localhost:8080/api/pie-chart/1
 ###
 #TODO product-transactions-statistics-barChart-pieChart
 
-GET http://localhost:8080/api/product-transactions-statistics-barChart-pieChart/1
+GET http://localhost:8080/api/product-transactions-statistics-barChart-pieChart/
 
