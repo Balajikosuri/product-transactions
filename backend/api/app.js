@@ -63,13 +63,11 @@ app.get("/api/get-transactions-count", async (req, res) => {
 
 async function initializeAndSeedDatabase() {
   try {
-    const res = await axios.get(
-      "http://localhost:8080/api/get-transactions-count"
-    );
-    const jsonData = await res.data;
+    const res = await fetch("http://localhost:8080/api/get-transactions-count");
+    const jsonData = await res.json();
 
     const numberOfTransactions = jsonData.number_of_transactions;
-
+    console.log(jsonData);
     if (numberOfTransactions === 0) {
       const seedData = await fetchSeedData();
 
