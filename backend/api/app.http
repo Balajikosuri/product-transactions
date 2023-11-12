@@ -21,8 +21,8 @@ GET http://localhost:8080/api/bar-chart/1
 # pie-chart
 GET http://localhost:8080/api/pie-chart/1
 ###
-##product-transactions-statistics-product-data
+##product-transactions-statistics-barChart-pieChart
 
-GET http://localhost:8080/api/combined-product-data/1
+GET http://localhost:8080/api/product-transactions-statistics-barChart-pieChart/1
 
 

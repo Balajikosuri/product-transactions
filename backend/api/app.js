@@ -41,6 +41,17 @@ async function fetchSeedData() {
   }
 }
 
+// CREATE TABLE IF NOT EXISTS product_transactions (
+//     id INTEGER PRIMARY KEY,
+//     title TEXT,
+//     price INTEGER,
+//     description  TEXT,
+//     category TEXT,
+//     image TEXT,
+//     sold BOOLEAN,
+//     date_of_sale TEXT
+//   )
+
 app.get("/api/get-transactions-count", async (req, res) => {
   const colsCount = await db.get(
     `select count(*) as number_of_transactions from product_transactions`
@@ -50,7 +61,9 @@ app.get("/api/get-transactions-count", async (req, res) => {
 
 async function initializeAndSeedDatabase() {
   try {
-    const res = await fetch("http://localhost:8080/api/get-transactions-count");
+    const res = await axios.get(
+      "http://localhost:8080/api/get-transactions-count"
+    );
     const jsonData = await res.json();
 
     const numberOfTransactions = jsonData.number_of_transactions;
@@ -82,17 +95,6 @@ async function initializeAndSeedDatabase() {
     console.log(`Error during database initialization: ${error}`);
   }
 }
-
-// CREATE TABLE IF NOT EXISTS product_transactions (
-//     id INTEGER PRIMARY KEY,
-//     title TEXT,
-//     price INTEGER,
-//     description  TEXT,
-//     category TEXT,
-//     image TEXT,
-//     sold BOOLEAN,
-//     date_of_sale TEXT
-//   )
 
 //TODO initialize - database;
 app.post("/api/initialize-database", async (req, res) => {
@@ -230,38 +232,41 @@ app.get("/api/pie-chart/:month", async (req, res) => {
 });
 
 //TODO combined-product-data by month
-app.get("/api/combined-product-data/:month", async (req, res) => {
-  const { month } = req.params;
+app.get(
+  "/api/product-transactions-statistics-barChart-pieChart/:month",
+  async (req, res) => {
+    const { month } = req.params;
 
-  try {
-    const transactionsResponse = await axios.get(
-      `http://localhost:8080/api/transactions?search=&page=1&perPage=10`
-    );
+    try {
+      const transactionsResponse = await axios.get(
+        `http://localhost:8080/api/transactions?search=&page=1&perPage=10`
+      );
 
-    const statisticsResponse = await axios.get(
-      `http://localhost:8080/api/statistics/${month}`
-    );
+      const statisticsResponse = await axios.get(
+        `http://localhost:8080/api/statistics/${month}`
+      );
 
-    const barChartDataResponse = await axios.get(
-      `http://localhost:8080/api/bar-chart/${month}`
-    );
-    const pieChartDataResponse = await axios.get(
-      `http://localhost:8080/api/pie-chart/${month}`
-    );
+      const barChartDataResponse = await axios.get(
+        `http://localhost:8080/api/bar-chart/${month}`
+      );
+      const pieChartDataResponse = await axios.get(
+        `http://localhost:8080/api/pie-chart/${month}`
+      );
 
-    const combinedData = {
-      transactions: transactionsResponse.data,
-      statistics: statisticsResponse.data,
-      bar_chart: barChartDataResponse.data,
-      pie_chart: pieChartDataResponse.data,
-    };
+      const combinedData = {
+        transactions: transactionsResponse.data,
+        statistics: statisticsResponse.data,
+        bar_chart: barChartDataResponse.data,
+        pie_chart: pieChartDataResponse.data,
+      };
 
-    res.json(combinedData);
-  } catch (error) {
-    console.error(`Error while fetching combined product data: ${error}`);
-    res.status(500).send("Internal Server Error");
+      res.json(combinedData);
+    } catch (error) {
+      console.error(`Error while fetching combined product data: ${error}`);
+      res.status(500).send("Internal Server Error");
+    }
   }
-});
+);
 
 // CAST(strftime('%Y', date_of_sale) AS int) = ${year} and
 // CAST(strftime('%Y', date_of_sale) AS int) = ${year} and
