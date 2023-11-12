@@ -11,10 +11,8 @@ app.use(cors());
 
 let db = null;
 const port = process.env.PORT || 8080;
-let isInitial = false;
-const initializeDBAndServer = async () => {
-  isInitial = true;
 
+const initializeDBAndServer = async () => {
   try {
     db = await open({
       filename: dbPath,
@@ -67,7 +65,7 @@ async function initializeAndSeedDatabase() {
     const jsonData = await res.json();
 
     const numberOfTransactions = jsonData.number_of_transactions;
-    console.log(jsonData);
+    // console.log(jsonData);
     if (numberOfTransactions === 0) {
       const seedData = await fetchSeedData();
 
@@ -97,7 +95,7 @@ async function initializeAndSeedDatabase() {
 }
 
 //TODO initialize - database;
-app.get("/api/initialize-database/", async (req, res) => {
+app.get("/api/initialize-database", async (req, res) => {
   try {
     await initializeAndSeedDatabase();
     res.status(200).json({ message: "Database initialized successfully" });
