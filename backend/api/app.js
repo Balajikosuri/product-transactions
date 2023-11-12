@@ -105,7 +105,7 @@ app.get("/api/initialize-database/", async (req, res) => {
     res.status(200).json({ message: "Database initialized successfully" });
   } catch (error) {
     console.error(`Error while initializing : ${error}`);
-    res.status(500).send("Internal Server Error");
+    res.status(500).send("Internal Server Error at initialize-database");
   }
 });
 // transactions
