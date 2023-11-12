@@ -64,7 +64,7 @@ async function initializeAndSeedDatabase() {
     const res = await axios.get(
       "http://localhost:8080/api/get-transactions-count"
     );
-    const jsonData = await res.json();
+    const jsonData = await res.data;
 
     const numberOfTransactions = jsonData.number_of_transactions;
 
