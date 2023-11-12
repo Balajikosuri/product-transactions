@@ -243,7 +243,7 @@ app.get(
 
     try {
       const transactionsResponse = await axios.get(
-        `https://product-transactions-api.onrender.com/api/transactions?search=${search}&page=${page}&perPage=${perPage}`
+        `https://product-transactions-api.onrender.com/api/transactions?search='${search}'&page=${page}&perPage=${perPage}`
       );
       const statisticsResponse = await axios.get(
         `https://product-transactions-api.onrender.com/api/statistics/${month}`
