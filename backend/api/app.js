@@ -247,18 +247,16 @@ app.get(
 
     try {
       const transactionsResponse = await axios.get(
-        `http://localhost:8080/api/transactions?search=${search}&page=${page}&perPage=${perPage}`
+        `https://product-transactions-api.onrender.com/api/transactions?search=${search}&page=${page}&perPage=${perPage}`
       );
-
       const statisticsResponse = await axios.get(
-        `http://localhost:8080/api/statistics/${month}`
+        `https://product-transactions-api.onrender.com/api/statistics/${month}`
       );
-
       const barChartDataResponse = await axios.get(
-        `http://localhost:8080/api/bar-chart/${month}`
+        `https://product-transactions-api.onrender.com/api/bar-chart/${month}`
       );
       const pieChartDataResponse = await axios.get(
-        `http://localhost:8080/api/pie-chart/${month}`
+        `https://product-transactions-api.onrender.com/api/pie-chart/${month}`
       );
 
       const combinedData = {
@@ -270,12 +268,10 @@ app.get(
 
       res.json(combinedData);
     } catch (error) {
-      console.error(`Error while fetching combined product data: ${error}`);
-      res
-        .status(500)
-        .send(
-          "Internal Server Error at product-transactions-statistics-barChart-pieChart"
-        );
+      console.error(
+        `Error while fetching combined product data: ${error.message}`
+      );
+      res.status(500).send("Internal Server Error");
     }
   }
 );
