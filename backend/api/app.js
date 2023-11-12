@@ -99,9 +99,14 @@ async function initializeAndSeedDatabase() {
 }
 
 //TODO initialize - database;
-app.post("/api/initialize-database", async (req, res) => {
-  await initializeAndSeedDatabase();
-  res.status(200).json({ message: "Database initialized successfully" });
+app.post("/api/initialize-database/", async (req, res) => {
+  try {
+    await initializeAndSeedDatabase();
+    res.status(200).json({ message: "Database initialized successfully" });
+  } catch (error) {
+    console.error(`Error while initializing : ${error}`);
+    res.status(500).send("Internal Server Error");
+  }
 });
 // transactions
 app.get("/api/transactions", async (req, res) => {
@@ -235,7 +240,7 @@ app.get("/api/pie-chart/:month", async (req, res) => {
 
 //TODO combined-product-data by month
 app.get(
-  "/api/product-transactions-statistics-barChart-pieChart/:month",
+  "/api/product-transactions-statistics-barChart-pieChart/:month/",
   async (req, res) => {
     const { month } = req.params;
 
