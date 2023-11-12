@@ -60,7 +60,7 @@ async function initializeAndSeedDatabase() {
 
       for (const transaction of seedData) {
         await db.run(
-          `INSERT INTO product_transactions (id,title,price,description,category,image,sold,dateOfSale) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+          `INSERT INTO product_transactions (id,title,price,description,category,image,sold,date_of_sale) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
           [
             transaction.id,
             transaction.title,
@@ -91,7 +91,7 @@ async function initializeAndSeedDatabase() {
 //     category TEXT,
 //     image TEXT,
 //     sold BOOLEAN,
-//     dateOfSale TEXT
+//     date_of_sale TEXT
 //   )
 
 //TODO initialize - database;
@@ -122,21 +122,21 @@ app.get("/api/statistics/:month", async (req, res) => {
   const { month } = req.params;
   try {
     const totalSaleAmount = await db.get(
-      `SELECT SUM(price) as totalSaleAmount FROM product_transactions WHERE  CAST(strftime('%m', dateOfSale) AS int)=${month}  AND sold = 1 ORDER BY id `
+      `SELECT SUM(price) as totalSaleAmount FROM product_transactions WHERE  CAST(strftime('%m', date_of_sale) AS int)=${month}  AND sold = 1 ORDER BY id `
     );
 
     const totalSoldItems = await db.get(
-      `SELECT COUNT(*) as totalSoldItems FROM product_transactions WHERE  CAST(strftime('%m', dateOfSale) AS int)=${month}  AND sold = 1 ORDER BY id `
+      `SELECT COUNT(*) as totalSoldItems FROM product_transactions WHERE  CAST(strftime('%m', date_of_sale) AS int)=${month}  AND sold = 1 ORDER BY id `
     );
 
     const totalNotSoldItems = await db.get(
-      `SELECT COUNT(*) as totalNotSoldItems FROM product_transactions WHERE  CAST(strftime('%m', dateOfSale) AS int)=${month}  AND sold = 0 ORDER BY id`
+      `SELECT COUNT(*) as totalNotSoldItems FROM product_transactions WHERE  CAST(strftime('%m', date_of_sale) AS int)=${month}  AND sold = 0 ORDER BY id`
     );
 
     res.json({
-      totalSaleAmount: totalSaleAmount.totalSaleAmount || 0,
-      totalSoldItems: totalSoldItems.totalSoldItems || 0,
-      totalNotSoldItems: totalNotSoldItems.totalNotSoldItems || 0,
+      total_sale_amount: totalSaleAmount.totalSaleAmount || 0,
+      total_sold_items: totalSoldItems.totalSoldItems || 0,
+      total_not_sold_items: totalNotSoldItems.totalNotSoldItems || 0,
     });
   } catch (error) {
     console.error(`Error while fetching statistics: ${error}`);
@@ -177,7 +177,7 @@ app.get("/api/bar-chart/:month", async (req, res) => {
         END AS range,
         COUNT(*) AS items
       FROM product_transactions
-      WHERE CAST(strftime('%m', dateOfSale) AS int) = ${month}
+      WHERE CAST(strftime('%m', date_of_sale) AS int) = ${month}
       GROUP BY range
     `);
 
@@ -213,7 +213,7 @@ app.get("/api/pie-chart/:month", async (req, res) => {
           `
           SELECT COUNT(*) AS items
           FROM product_transactions
-          WHERE CAST(strftime('%m', dateOfSale) AS int) = ? AND category = ?
+          WHERE CAST(strftime('%m', date_of_sale) AS int) = ? AND category = ?
         `,
           [selectedMonth, category]
         );
@@ -229,6 +229,40 @@ app.get("/api/pie-chart/:month", async (req, res) => {
   }
 });
 
-// CAST(strftime('%Y', dateOfSale) AS int) = ${year} and
-// CAST(strftime('%Y', dateOfSale) AS int) = ${year} and
-// CAST(strftime('%Y', dateOfSale) AS int) = ${year} and
+//TODO combined-product-data by month
+app.get("/api/combined-product-data/:month", async (req, res) => {
+  const { month } = req.params;
+
+  try {
+    const transactionsResponse = await axios.get(
+      `http://localhost:8080/api/transactions?search=&page=1&perPage=10`
+    );
+
+    const statisticsResponse = await axios.get(
+      `http://localhost:8080/api/statistics/${month}`
+    );
+
+    const barChartDataResponse = await axios.get(
+      `http://localhost:8080/api/bar-chart/${month}`
+    );
+    const pieChartDataResponse = await axios.get(
+      `http://localhost:8080/api/pie-chart/${month}`
+    );
+
+    const combinedData = {
+      transactions: transactionsResponse.data,
+      statistics: statisticsResponse.data,
+      bar_chart: barChartDataResponse.data,
+      pie_chart: pieChartDataResponse.data,
+    };
+
+    res.json(combinedData);
+  } catch (error) {
+    console.error(`Error while fetching combined product data: ${error}`);
+    res.status(500).send("Internal Server Error");
+  }
+});
+
+// CAST(strftime('%Y', date_of_sale) AS int) = ${year} and
+// CAST(strftime('%Y', date_of_sale) AS int) = ${year} and
+// CAST(strftime('%Y', date_of_sale) AS int) = ${year} and
