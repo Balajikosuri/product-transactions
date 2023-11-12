@@ -1,5 +1,5 @@
 #  initialize-database
-GET    http://localhost:8080/api/initialize-database
+GET  http://localhost:8080/api/initialize-database
 
 ###
 # get-transactions-count

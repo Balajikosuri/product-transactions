@@ -123,7 +123,7 @@ app.get("/api/transactions", async (req, res) => {
     res.json(transactions);
   } catch (error) {
     console.error(`Error while fetching transactions: ${error}`);
-    res.status(500).send("Internal Server Error");
+    res.status(500).send("Internal Server Error at transactions");
   }
 });
 // statistics by selected month
@@ -149,7 +149,7 @@ app.get("/api/statistics/:month", async (req, res) => {
     });
   } catch (error) {
     console.error(`Error while fetching statistics: ${error}`);
-    res.status(500).send("Internal Server Error");
+    res.status(500).send("Internal Server Error at statistics");
   }
 });
 // bar-chart by selected month regardless of the year
@@ -198,7 +198,7 @@ app.get("/api/bar-chart/:month", async (req, res) => {
     res.json(result);
   } catch (error) {
     console.error(`Error while fetching bar chart data: ${error}`);
-    res.status(500).send("Internal Server Error");
+    res.status(500).send("Internal Server Error at bar-char");
   }
 });
 
@@ -234,7 +234,7 @@ app.get("/api/pie-chart/:month", async (req, res) => {
     res.json(pieChartData);
   } catch (error) {
     console.error(`Error while fetching pie chart data: ${error}`);
-    res.status(500).send("Internal Server Error");
+    res.status(500).send("Internal Server Error pie-chart");
   }
 });
 
@@ -261,8 +261,6 @@ app.get(
         `http://localhost:8080/api/pie-chart/${month}`
       );
 
-      console.log(transactionsResponse);
-
       const combinedData = {
         transactions: transactionsResponse.data,
         statistics: statisticsResponse.data,
@@ -273,7 +271,11 @@ app.get(
       res.json(combinedData);
     } catch (error) {
       console.error(`Error while fetching combined product data: ${error}`);
-      res.status(500).send("Internal Server Error");
+      res
+        .status(500)
+        .send(
+          "Internal Server Error at product-transactions-statistics-barChart-pieChart"
+        );
     }
   }
 );
