@@ -3,9 +3,11 @@ const { open } = require("sqlite");
 const sqlite3 = require("sqlite3");
 const path = require("path");
 const axios = require("axios");
+const cors = require("cors");
 
 const app = express();
 const dbPath = path.join(__dirname, "productTransactions.db");
+app.use(cors());
 
 let db = null;
 const port = process.env.PORT || 8080;
@@ -99,9 +101,9 @@ async function initializeAndSeedDatabase() {
 //TODO initialize - database;
 app.post("/api/initialize-database", async (req, res) => {
   await initializeAndSeedDatabase();
-  res.status(200).send("Database initialized successfully");
+  res.status(200).json({ message: "Database initialized successfully" });
 });
-//TODO transactions
+// transactions
 app.get("/api/transactions", async (req, res) => {
   const { search = "", page = 1, perPage = 10 } = req.query;
 
@@ -119,7 +121,7 @@ app.get("/api/transactions", async (req, res) => {
     res.status(500).send("Internal Server Error");
   }
 });
-//TODO statistics by selected month
+// statistics by selected month
 app.get("/api/statistics/:month", async (req, res) => {
   const { month } = req.params;
   try {
@@ -145,7 +147,7 @@ app.get("/api/statistics/:month", async (req, res) => {
     res.status(500).send("Internal Server Error");
   }
 });
-//TODO bar-chart by selected month regardless of the year
+// bar-chart by selected month regardless of the year
 app.get("/api/bar-chart/:month", async (req, res) => {
   const { month } = req.params;
 
@@ -195,7 +197,7 @@ app.get("/api/bar-chart/:month", async (req, res) => {
   }
 });
 
-//TODO pie-chart
+//pie-chart
 
 app.get("/api/pie-chart/:month", async (req, res) => {
   const { month } = req.params;
